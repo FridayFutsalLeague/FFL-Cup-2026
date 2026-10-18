@@ -32,7 +32,7 @@ function loadData(){
     if(finished) return;
     finished = true; clearTimeout(timeout); cleanup();
     state = data; hideConnection(); render();
-    $('#lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit', second:'2-digit'});
+    $('#lastUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit', second:'2-digit', hour12:true}).toLowerCase();
   };
   script.onerror = () => {
     if(finished) return;
@@ -85,7 +85,7 @@ function table(rows){
 function fmtTime(t){
   if(!t) return '';
   const [h,m]=String(t).split(':').map(Number); const d=new Date(); d.setHours(h,m||0,0,0);
-  return d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+  return d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit',hour12:true}).toLowerCase();
 }
 function fixture(m){
   const r=resolvedMatch(m), done=finalMatch(m), hs=n(m.homeScore), as=n(m.awayScore);
@@ -112,12 +112,13 @@ function render(){
   const groupMatches=state.matches.filter(m=>stage(m)==='group');
   const completed=groupMatches.filter(finalMatch), upcoming=groupMatches.filter(m=>!finalMatch(m));
   const latest=[...completed].slice(-4).reverse(), next=upcoming.slice(0,4);
-  $('#overview').innerHTML=`<div class="grid"><div class="card"><div class="section-title"><h2>Latest Results</h2><span class="pill">${completed.length}/12 group games</span></div>${latest.length?latest.map(fixture).join(''):'<p class="muted">No results yet.</p>'}</div><div class="card"><h2>Up Next</h2>${next.length?next.map(fixture).join(''):'<p class="muted">Group stage complete.</p>'}</div></div><div class="grid" style="margin-top:16px"><div class="card"><h3>Group A</h3>${table(A)}</div><div class="card"><h3>Group B</h3>${table(B)}</div></div>`;
-  $('#groups').innerHTML=`<div class="grid"><div class="card"><h2>Group A</h2>${table(A)}</div><div class="card"><h2>Group B</h2>${table(B)}</div></div>`;
-  $('#fixtures').innerHTML=`<div class="card"><h2>Fixtures & Results</h2>${groupMatches.map(fixture).join('')}</div>`;
   const all=totals();
   const goals=[...all].filter(x=>x.goals>0).sort((a,b)=>b.goals-a.goals||b.assists-a.assists||a.player.localeCompare(b.player)).slice(0,12);
   const assists=[...all].filter(x=>x.assists>0).sort((a,b)=>b.assists-a.assists||b.goals-a.goals||a.player.localeCompare(b.player)).slice(0,12);
+  const topGoals=goals.slice(0,5), topAssists=assists.slice(0,5);
+  $('#overview').innerHTML=`<div class="grid"><div class="card"><div class="section-title"><h2>Latest Results</h2><span class="pill">${completed.length}/12 group games</span></div>${latest.length?latest.map(fixture).join(''):'<p class="muted">No results yet.</p>'}</div><div class="card"><h2>Up Next</h2>${next.length?next.map(fixture).join(''):'<p class="muted">Group stage complete.</p>'}</div></div><div class="grid" style="margin-top:16px"><div class="card"><h3>Group A</h3>${table(A)}</div><div class="card"><h3>Group B</h3>${table(B)}</div></div><div class="grid" style="margin-top:16px"><div class="card"><h2>Top 5 Goals</h2>${statList(topGoals,'goals')}</div><div class="card"><h2>Top 5 Assists</h2>${statList(topAssists,'assists')}</div></div>`;
+  $('#groups').innerHTML=`<div class="grid"><div class="card"><h2>Group A</h2>${table(A)}</div><div class="card"><h2>Group B</h2>${table(B)}</div></div>`;
+  $('#fixtures').innerHTML=`<div class="card"><h2>Fixtures & Results</h2>${groupMatches.map(fixture).join('')}</div>`;
   $('#stats').innerHTML=`<div class="grid"><div class="card"><h2>Goals</h2>${statList(goals,'goals')}</div><div class="card"><h2>Assists</h2>${statList(assists,'assists')}</div></div>`;
   const finals=state.matches.filter(m=>stage(m)!=='group');
   $('#finals').innerHTML=`<div class="card"><h2>Knockout Stage</h2>${finals.map(fixture).join('')}<p class="small muted">Semi-finals: A1 vs B2 and B1 vs A2. Tied knockout matches go straight to penalties.</p></div>`;
