@@ -1,23 +1,33 @@
-FFL Cup 2026 Player View v3
+FFL Cup 2026 — Player View v4
 
-UPLOAD TO GITHUB
-Replace the current public-site files with everything in this folder:
+WHAT'S NEW
+- Clickable player names/photos open an FFL Cup player profile.
+- Career totals and year-by-year history are sourced from FFL Cup Stats.
+- Live 2026 goals/assists/matches are combined with the public tournament feed.
+- New Competition Info tab.
+- Competition Info is designed to read from the new Competition Info backend Sheet tab.
+
+GITHUB UPDATE
+Upload/replace the contents of this folder in your FFL-cup-2026 repository:
 - index.html
 - styles.css
 - public.js
+- player-history.js
 - config.js
-- assets/ folder
+- assets/ (keep the full folder)
 
-Keep the folder structure exactly as supplied.
+You do NOT need to change the admin page for player profiles.
 
-No Google Apps Script/Admin changes are required for this update.
-Your existing Google Sheet backend and admin page continue to work.
+COMPETITION INFO BACKEND
+The Competition Info Sheet tab already exists.
+Fill in the Details column.
+Then follow APPS_SCRIPT_COMPETITION_INFO_PATCH.txt once so the public site can receive those rows.
+Do not replace your whole Code.gs because it contains your private admin PIN.
 
-NEW IN THIS VERSION
-- FFL logo/branding in the header
-- Team badges throughout standings, fixtures and player stats
-- All 36 player photos bundled locally and optimized for web
-- New Teams tab with all six line-ups
-- Redesigned home screen, standings, fixtures, stats and finals
-- Mobile responsive layout
-- Existing live Google Sheets connection retained
+PLAYER HISTORY NAME MAPPING
+- Wolves Anthony -> Anthony T historical record
+- Eagles Simon -> Simon T historical record
+- Dragons Raksa -> Chanraksa historical record
+- Same-name historical records are used for Vu and Jason.
+
+Player career figures are the supplied all-time stats through 2025. 2026 tournament figures display live from the tournament backend.

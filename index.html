@@ -36,6 +36,7 @@
       <button data-tab="fixtures">Fixtures</button>
       <button data-tab="stats">Player Stats</button>
       <button data-tab="finals">Finals</button>
+      <button data-tab="info">Competition Info</button>
     </nav>
 
     <section id="overview" class="tab"></section>
@@ -44,12 +45,22 @@
     <section id="fixtures" class="tab hidden"></section>
     <section id="stats" class="tab hidden"></section>
     <section id="finals" class="tab hidden"></section>
+    <section id="info" class="tab hidden"></section>
 
     <footer>
       <img src="assets/logos/ffl-mark.webp" alt="" class="footer-mark" />
       <span id="lastUpdated">Waiting for tournament data…</span>
     </footer>
   </main>
+
+  <div id="playerModal" class="player-modal hidden" role="dialog" aria-modal="true" aria-labelledby="playerModalTitle">
+    <button class="player-modal-backdrop" aria-label="Close player profile"></button>
+    <div class="player-modal-panel">
+      <button class="player-modal-close" aria-label="Close player profile">×</button>
+      <div id="playerModalBody"></div>
+    </div>
+  </div>
+
   <script type="module" src="public.js"></script>
 </body>
 </html>

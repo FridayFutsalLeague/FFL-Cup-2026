@@ -1,0 +1,47 @@
+FFL Cup 2026 — Competition Info backend patch
+
+IMPORTANT: Do NOT replace your entire Code.gs, because your live file contains your private ADMIN_PIN.
+Make only the three small edits below.
+
+1) In function getTournamentData_(), find these lines:
+
+  const teamRows = readObjects_(ss.getSheetByName('Teams'));
+  const matchRows = readObjects_(ss.getSheetByName('Matches'));
+  const statRows = readObjects_(ss.getSheetByName('Match Stats'));
+
+Add this line immediately underneath:
+
+  const competitionRows = readObjects_(ss.getSheetByName('Competition Info'));
+
+
+2) Still inside getTournamentData_(), after the matchStats block, add:
+
+  const competitionInfo = competitionRows.map(r => ({
+    section: String(r.Section || '').trim(),
+    item: String(r.Item || '').trim(),
+    details: String(r.Details || '').trim(),
+    displayOrder: Number(r['Display Order'] || 999)
+  })).filter(r => r.item);
+
+
+3) In the return object near the bottom of getTournamentData_(), find:
+
+    matches,
+    matchStats,
+    generatedAt: new Date().toISOString()
+
+Change it to:
+
+    matches,
+    matchStats,
+    competitionInfo,
+    generatedAt: new Date().toISOString()
+
+Then:
+- Save Code.gs
+- Deploy > Manage deployments
+- Click the pencil icon
+- Version > New version
+- Deploy
+
+Your existing admin/player URLs stay the same.

@@ -1,4 +1,5 @@
 import { APPS_SCRIPT_URL } from './config.js';
+import { PLAYER_HISTORY } from './player-history.js';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -11,7 +12,8 @@ const PHOTO_OVERRIDES = {
 };
 
 const slug = (s) => String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const teamBadge = (team, extra='') => TEAM_BADGES[team] ? `<img class="team-badge ${extra}" src="${TEAM_BADGES[team]}" alt="${team} badge">` : '';
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const teamBadge = (team, extra='') => TEAM_BADGES[team] ? `<img class="team-badge ${extra}" src="${TEAM_BADGES[team]}" alt="${esc(team)} badge">` : '';
 const photoPath = (team,player) => PHOTO_OVERRIDES[`${team}::${player}`] || `assets/players/${slug(team)}/${slug(player)}.webp`;
 
 $$('.nav button').forEach(btn => btn.addEventListener('click', () => {
@@ -68,9 +70,9 @@ function resolvedTeam(label){
   return label;
 }
 function resolvedMatch(m){return {...m,home:resolvedTeam(m.home),away:resolvedTeam(m.away)}}
-function teamInline(team,extra=''){return `<span class="team-inline">${teamBadge(team,extra)}<strong>${team}</strong></span>`}
+function teamInline(team,extra=''){return `<span class="team-inline">${teamBadge(team,extra)}<strong>${esc(team)}</strong></span>`}
 function table(rows){
-  return `<div class="table-wrap"><table class="table"><thead><tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${i<2?'qualify':''}"><td><span class="team-inline">${teamBadge(r.team,'small-badge')}<strong>${i+1}. ${r.team}</strong></span></td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD>0?'+':''}${r.GD}</td><td><strong>${r.Pts}</strong></td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap"><table class="table"><thead><tr><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${i<2?'qualify':''}"><td><span class="team-inline">${teamBadge(r.team,'small-badge')}<strong>${i+1}. ${esc(r.team)}</strong></span></td><td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td><td>${r.GF}</td><td>${r.GA}</td><td>${r.GD>0?'+':''}${r.GD}</td><td><strong>${r.Pts}</strong></td></tr>`).join('')}</tbody></table></div>`;
 }
 function fmtTime(t){
   if(!t)return '';
@@ -89,18 +91,93 @@ function totals(){
   (state.matchStats||[]).forEach(s=>{const k=s.team+'::'+s.player;if(!out[k])out[k]={team:s.team,player:s.player,goals:0,assists:0};out[k].goals+=Number(s.goals||0);out[k].assists+=Number(s.assists||0)});
   return Object.values(out);
 }
+function playerButton(team,player,inner,cls=''){
+  return `<button class="player-click ${cls}" data-team="${esc(team)}" data-player="${esc(player)}" type="button" aria-label="View ${esc(player)} Cup stats">${inner}</button>`;
+}
 function statList(arr,key){
   if(!arr.length)return `<div class="empty-state">No stats recorded yet.</div>`;
-  return arr.map((x,i)=>`<div class="statrow"><div class="player-stat"><span class="rank">${i+1}</span><img class="player-thumb" src="${photoPath(x.team,x.player)}" alt="${x.player}" loading="lazy"><div class="player-stat-copy"><div class="player-stat-name">${x.player}</div><div class="player-stat-team">${teamBadge(x.team,'small-badge')} ${x.team}</div></div></div><span class="stat-number">${x[key]}</span></div>`).join('');
+  return arr.map((x,i)=>`<div class="statrow">${playerButton(x.team,x.player,`<span class="player-stat"><span class="rank">${i+1}</span><img class="player-thumb" src="${photoPath(x.team,x.player)}" alt="${esc(x.player)}" loading="lazy"><span class="player-stat-copy"><span class="player-stat-name">${esc(x.player)}</span><span class="player-stat-team">${teamBadge(x.team,'small-badge')} ${esc(x.team)}</span></span></span>`,'stat-player-button')}<span class="stat-number">${x[key]}</span></div>`).join('');
 }
 function teamCard(team,group){
   const players=state.teams?.[team]||[];
-  return `<article class="card team-card"><div class="team-card-head">${teamBadge(team)}<div><div class="team-card-title">${team}</div><div class="group-chip">Group ${group}</div></div></div><div class="roster-grid">${players.map(p=>`<div class="player-card"><img class="player-photo" src="${photoPath(team,p)}" alt="${p}" loading="lazy"><div class="player-name">${p}</div></div>`).join('')}</div></article>`;
+  return `<article class="card team-card"><div class="team-card-head">${teamBadge(team)}<div><div class="team-card-title">${esc(team)}</div><div class="group-chip">Group ${group}</div></div></div><div class="roster-grid">${players.map(p=>playerButton(team,p,`<img class="player-photo" src="${photoPath(team,p)}" alt="${esc(p)}" loading="lazy"><span class="player-name">${esc(p)}</span>`,'player-card')).join('')}</div></article>`;
 }
 function renderTeams(){
   const sections=['A','B'].map(g=>`<div class="team-section"><div class="team-section-heading"><div><div class="section-kicker">Tournament squads</div><h2>Group ${g}</h2></div><span class="pill">${(state.groups[g]||[]).length} teams</span></div><div class="teams-grid">${(state.groups[g]||[]).map(t=>teamCard(t,g)).join('')}</div></div>`).join('');
   $('#teams').innerHTML=sections;
 }
+function renderCompetitionInfo(){
+  const rows=[...(state.competitionInfo||[])].filter(x=>String(x.details||'').trim()).sort((a,b)=>Number(a.displayOrder||999)-Number(b.displayOrder||999));
+  if(!rows.length){
+    $('#info').innerHTML=`<div class="card"><div class="section-kicker">Tournament guide</div><h2>Competition Info</h2><div class="empty-state">Competition information is ready in the backend Sheet. Fill in the <strong>Details</strong> column, then deploy the small Apps Script update included with this package.</div></div>`;
+    return;
+  }
+  const sections={};
+  rows.forEach(r=>{const section=String(r.section||'Other');(sections[section] ||= []).push(r)});
+  $('#info').innerHTML=`<div class="info-grid">${Object.entries(sections).map(([section,items])=>`<div class="card info-card"><div class="section-kicker">Competition info</div><h2>${esc(section)}</h2>${items.map(item=>`<div class="info-row"><div class="info-label">${esc(item.item)}</div><div class="info-detail">${esc(item.details)}</div></div>`).join('')}</div>`).join('')}</div>`;
+}
+
+function livePlayerStats(team,player){
+  const stat=totals().find(x=>x.team===team&&x.player===player)||{goals:0,assists:0};
+  const matches=(state.matches||[]).filter(finalMatch).map(resolvedMatch).filter(m=>m.home===team||m.away===team).length;
+  return {matches,goals:stat.goals,assists:stat.assists,involvements:stat.goals+stat.assists};
+}
+function metric(label,value,accent=''){
+  return `<div class="profile-metric ${accent}"><span class="profile-metric-value">${value}</span><span class="profile-metric-label">${label}</span></div>`;
+}
+function rate(v){return Number(v||0).toFixed(2)}
+function historyTable(history){
+  if(!history?.length)return `<div class="profile-debut">Cup debut in 2026</div>`;
+  return `<div class="profile-history"><div class="profile-history-head"><span>Year</span><span>MP</span><span>G</span><span>A</span><span>Finish</span></div>${history.map(y=>`<div class="profile-history-row"><strong>${y.year}</strong><span>${y.matches}</span><span>${y.goals}</span><span>${y.assists}</span><span>${y.champion?'🏆 Champions':(y.runnerUp?'🥈 Runners-up':'—')}</span></div>`).join('')}</div>`;
+}
+function openPlayer(team,player){
+  const key=`${team}::${player}`;
+  const h=PLAYER_HISTORY[key]||{cupApps:0,champions:0,runnerUps:0,matches:0,wins:0,draws:0,losses:0,goals:0,assists:0,goalsPerMatch:0,assistsPerMatch:0,involvementPerMatch:0,history:[]};
+  const live=livePlayerStats(team,player);
+  const honors=[];
+  if(h.champions)honors.push(`🏆 ${h.champions}× FFL Cup Champion${h.champions>1?'s':''}`);
+  if(h.runnerUps)honors.push(`🥈 ${h.runnerUps}× Runner-up${h.runnerUps>1?'s':''}`);
+  const modal=$('#playerModal');
+  $('#playerModalBody').innerHTML=`
+    <div class="profile-hero">
+      <div class="profile-photo-wrap"><img class="profile-photo" src="${photoPath(team,player)}" alt="${esc(player)}"></div>
+      <div class="profile-identity">
+        <div class="profile-team">${teamBadge(team)} <span>${esc(team)}</span></div>
+        <h2 id="playerModalTitle">${esc(player)}</h2>
+        <div class="profile-subtitle">FFL Cup Player Profile</div>
+        ${honors.length?`<div class="profile-honors">${honors.map(x=>`<span>${x}</span>`).join('')}</div>`:''}
+      </div>
+    </div>
+    <section class="profile-section">
+      <div class="profile-section-heading"><div><div class="section-kicker">Career record</div><h3>All-Time FFL Cup</h3></div><span class="pill">Through 2025</span></div>
+      <div class="profile-metrics">
+        ${metric('Cup Apps',h.cupApps)}${metric('Matches',h.matches)}${metric('Wins',h.wins)}${metric('Goals',h.goals,'gold')}${metric('Assists',h.assists,'gold')}${metric('G / Match',rate(h.goalsPerMatch))}${metric('A / Match',rate(h.assistsPerMatch))}${metric('G+A / Match',rate(h.involvementPerMatch))}
+      </div>
+    </section>
+    <section class="profile-section profile-live-section">
+      <div class="profile-section-heading"><div><div class="section-kicker">This tournament</div><h3>2026 Live</h3></div><span class="live-pill">LIVE</span></div>
+      <div class="profile-metrics compact">
+        ${metric('Matches',live.matches)}${metric('Goals',live.goals,'gold')}${metric('Assists',live.assists,'gold')}${metric('G+A',live.involvements)}
+      </div>
+    </section>
+    <section class="profile-section">
+      <div class="section-kicker">Cup history</div><h3>Year by Year</h3>
+      ${historyTable(h.history)}
+    </section>`;
+  modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+function closePlayer(){
+  $('#playerModal').classList.add('hidden');
+  document.body.classList.remove('modal-open');
+}
+function wirePlayerLinks(){
+  $$('.player-click').forEach(btn=>btn.addEventListener('click',()=>openPlayer(btn.dataset.team,btn.dataset.player)));
+}
+$('.player-modal-close').addEventListener('click',closePlayer);
+$('.player-modal-backdrop').addEventListener('click',closePlayer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePlayer()});
+
 function render(){
   if(!state)return;
   const A=standings('A'),B=standings('B');
@@ -115,6 +192,8 @@ function render(){
   $('#stats').innerHTML=`<div class="grid"><div class="card"><div class="section-kicker">Golden Boot race</div><h2>Goals</h2>${statList(goals,'goals')}</div><div class="card"><div class="section-kicker">Playmakers</div><h2>Assists</h2>${statList(assists,'assists')}</div></div>`;
   const finals=state.matches.filter(m=>stage(m)!=='group');
   $('#finals').innerHTML=`<div class="card final-hero"><div class="section-kicker">Knockout stage</div><h2>Road to the Cup</h2>${finals.map(fixture).join('')}<p class="small muted">Semi-finals: A1 vs B2 and B1 vs A2. Tied knockout matches go straight to penalties.</p></div>`;
+  renderCompetitionInfo();
+  wirePlayerLinks();
 }
 
 loadData();
