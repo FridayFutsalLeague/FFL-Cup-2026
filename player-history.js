@@ -1038,32 +1038,19 @@ export const PLAYER_HISTORY = {
   },
   "Lions::Jason": {
     "sourceName": "Jason",
-    "cupApps": 1,
-    "champions": 1,
+    "cupApps": 0,
+    "champions": 0,
     "runnerUps": 0,
-    "matches": 6,
-    "wins": 3,
-    "draws": 1,
-    "losses": 2,
-    "goals": 4,
-    "assists": 3,
-    "goalsPerMatch": 0.667,
-    "assistsPerMatch": 0.5,
-    "involvementPerMatch": 1.167,
-    "history": [
-      {
-        "year": 2025,
-        "apps": 1,
-        "matches": 6,
-        "wins": 3,
-        "draws": 1,
-        "losses": 2,
-        "goals": 4,
-        "assists": 3,
-        "champion": true,
-        "runnerUp": false
-      }
-    ]
+    "matches": 0,
+    "wins": 0,
+    "draws": 0,
+    "losses": 0,
+    "goals": 0,
+    "assists": 0,
+    "goalsPerMatch": 0,
+    "assistsPerMatch": 0,
+    "involvementPerMatch": 0,
+    "history": []
   },
   "Lions::Rahul": {
     "sourceName": "Rahul",
