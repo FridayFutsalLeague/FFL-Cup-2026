@@ -154,3 +154,8 @@ body.modal-open{overflow:hidden}
   .profile-hero{grid-template-columns:120px minmax(0,1fr);min-height:205px}.profile-photo-wrap{min-height:205px}.profile-identity h2{font-size:31px}.profile-subtitle{font-size:12px}
   .profile-metrics.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Finals section labels */
+.finals-section{margin-top:20px}
+.finals-section h3{margin:0 0 6px;font-size:18px}
+.finals-section + .finals-section{padding-top:18px;border-top:1px solid var(--line)}

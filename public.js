@@ -190,8 +190,9 @@ function render(){
   $('#groups').innerHTML=`<div class="grid"><div class="card"><div class="section-kicker">Group stage</div><h2>Group A</h2>${table(A)}</div><div class="card"><div class="section-kicker">Group stage</div><h2>Group B</h2>${table(B)}</div></div>`;
   $('#fixtures').innerHTML=`<div class="card"><div class="section-kicker">Full schedule</div><h2>Fixtures & Results</h2>${groupMatches.map(fixture).join('')}</div>`;
   $('#stats').innerHTML=`<div class="grid"><div class="card"><div class="section-kicker">Golden Boot race</div><h2>Goals</h2>${statList(goals,'goals')}</div><div class="card"><div class="section-kicker">Playmakers</div><h2>Assists</h2>${statList(assists,'assists')}</div></div>`;
-  const finals=state.matches.filter(m=>stage(m)!=='group');
-  $('#finals').innerHTML=`<div class="card final-hero"><div class="section-kicker">Knockout stage</div><h2>Road to the Cup</h2>${finals.map(fixture).join('')}<p class="small muted">Semi-finals: A1 vs B2 and B1 vs A2. Tied knockout matches go straight to penalties.</p></div>`;
+  const semiFinals=state.matches.filter(m=>stage(m)==='semi');
+  const grandFinal=state.matches.filter(m=>stage(m)==='final');
+  $('#finals').innerHTML=`<div class="card final-hero"><div class="section-kicker">Knockout stage</div><h2>Road to the Cup</h2><div class="finals-section"><h3>Semi Finals</h3>${semiFinals.map(fixture).join('')||'<div class="empty-state">Semi finals not available yet.</div>'}</div><div class="finals-section"><h3>Grand Final</h3>${grandFinal.map(fixture).join('')||'<div class="empty-state">Grand Final not available yet.</div>'}</div><p class="small muted">Semi-finals: A1 vs B2 and B1 vs A2. Tied knockout matches go straight to penalties.</p></div>`;
   renderCompetitionInfo();
   wirePlayerLinks();
 }
