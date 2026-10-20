@@ -155,7 +155,21 @@ body.modal-open{overflow:hidden}
   .profile-metrics.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
-/* Finals section labels */
-.finals-section{margin-top:20px}
-.finals-section h3{margin:0 0 6px;font-size:18px}
-.finals-section + .finals-section{padding-top:18px;border-top:1px solid var(--line)}
+/* v4.3 — clearly separated knockout stages */
+.finals-page{display:grid;gap:16px}
+.finals-intro{padding-bottom:14px}
+.finals-note{margin:8px 0 0;line-height:1.5}
+.final-stage-card{padding:0;overflow:hidden}
+.final-stage-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(255,255,255,.045),rgba(255,255,255,.01))}
+.final-stage-heading h2{margin:0;font-size:25px;letter-spacing:-.035em}
+.stage-pill{display:inline-flex;align-items:center;justify-content:center;min-width:82px;padding:7px 11px;border:1px solid #35445e;border-radius:999px;background:#141d2c;color:#b7c2d5;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.final-stage-matches{padding:0 20px 4px}
+.semi-stage{border-color:#31405a}
+.grand-final-stage{border-color:rgba(245,200,76,.55);background:linear-gradient(135deg,rgba(67,51,10,.40),rgba(13,19,31,.98))}
+.grand-final-stage .final-stage-heading{background:linear-gradient(90deg,rgba(245,200,76,.13),rgba(245,200,76,.025));border-bottom-color:rgba(245,200,76,.26)}
+.gold-pill{border-color:rgba(245,200,76,.52);background:rgba(245,200,76,.12);color:#ffe27b}
+.grand-final-stage .fixture{padding-top:18px;padding-bottom:18px}
+.grand-final-stage .score{font-size:30px;color:var(--gold)}
+@media(max-width:760px){
+  .final-stage-heading{padding:15px 14px}.final-stage-heading h2{font-size:22px}.final-stage-matches{padding:0 14px 3px}.stage-pill{min-width:auto;padding:6px 9px}
+}
