@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#070b12" />
   <title>FFL Cup 2026</title>
-  <link rel="icon" type="image/webp" href="assets/logos/ffl-mark.webp" />
+  <link rel="icon" type="image/png" href="assets/app/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -25,9 +27,13 @@
       <div class="hero-mark-wrap" aria-hidden="true">
         <img src="assets/logos/ffl-mark.webp" class="hero-mark" alt="" />
       </div>
+      <div class="hero-actions">
+        <button id="installAppBtn" class="install-app-btn" type="button">Install App</button>
+      </div>
     </header>
 
     <div id="connection" class="notice hidden"></div>
+    <div id="installHelp" class="notice install-help hidden"></div>
 
     <nav class="nav" aria-label="Tournament sections">
       <button class="active" data-tab="overview">Home</button>

@@ -31,3 +31,6 @@ PLAYER HISTORY NAME MAPPING
 - Same-name historical records are used for Vu and Jason.
 
 Player career figures are the supplied all-time stats through 2025. 2026 tournament figures display live from the tournament backend.
+
+
+PWA v4.4: Upload manifest.json, service-worker.js and the full assets/app folder as well. The site will offer an Install App button. Android browsers may show a native install prompt; iPhone users receive Safari Add to Home Screen instructions.

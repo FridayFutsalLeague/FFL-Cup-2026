@@ -199,3 +199,24 @@ function render(){
 
 loadData();
 setInterval(loadData,15000);
+
+
+// PWA install handling
+let fflDeferredInstallPrompt = null;
+const fflInstallBtn = document.getElementById('installAppBtn');
+const fflInstallHelp = document.getElementById('installHelp');
+function fflIsStandalone(){return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;}
+function fflShowInstallHelp(html){if(!fflInstallHelp)return;fflInstallHelp.innerHTML=html+'<br><button type="button" id="closeInstallHelp">Close</button>';fflInstallHelp.classList.remove('hidden');document.getElementById('closeInstallHelp')?.addEventListener('click',()=>fflInstallHelp.classList.add('hidden'));}
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();fflDeferredInstallPrompt=e;if(fflInstallBtn&&!fflIsStandalone())fflInstallBtn.classList.remove('hidden');});
+window.addEventListener('appinstalled',()=>{fflDeferredInstallPrompt=null;if(fflInstallBtn)fflInstallBtn.classList.add('hidden');if(fflInstallHelp)fflInstallHelp.classList.add('hidden');});
+if(fflInstallBtn){
+  if(fflIsStandalone()) fflInstallBtn.classList.add('hidden');
+  fflInstallBtn.addEventListener('click',async()=>{
+    if(fflDeferredInstallPrompt){fflDeferredInstallPrompt.prompt();await fflDeferredInstallPrompt.userChoice;fflDeferredInstallPrompt=null;return;}
+    const ua=navigator.userAgent||'';
+    if(/iPhone|iPad|iPod/i.test(ua)){fflShowInstallHelp('<strong>Install on iPhone/iPad:</strong> open this page in Safari, tap <strong>Share</strong>, then choose <strong>Add to Home Screen</strong>.');}
+    else if(/Android/i.test(ua)){fflShowInstallHelp('<strong>Install on Android:</strong> open the browser menu (⋮) and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.');}
+    else{fflShowInstallHelp('<strong>Install this app:</strong> use your browser menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.');}
+  });
+}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));}
