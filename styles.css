@@ -217,3 +217,298 @@ body.modal-open{overflow:hidden}
 @media(max-width:900px){.tot-grid.starters{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.awards-grid,.highlights-grid,.highlights-grid.knockout{grid-template-columns:1fr}.tot-grid.starters{grid-template-columns:repeat(2,minmax(0,1fr))}.champion-card{padding:20px}.champion-badge{width:62px;height:62px}.tot-grid .highlight-player-card img{height:190px}}
 @media(max-width:440px){.tot-grid.starters,.tot-grid.bench{grid-template-columns:1fr 1fr}.tot-grid .highlight-player-card img{height:150px}.highlight-player-card img{width:70px;height:70px}}
+
+
+/* v4.6 — premium champions hero + futsal Team of the Tournament */
+.premium-champion{
+  display:grid;
+  grid-template-columns:minmax(0,.95fr) minmax(420px,1.25fr);
+  gap:0;
+  padding:0;
+  min-height:430px;
+  border-color:rgba(245,200,76,.62);
+  background:
+    radial-gradient(circle at 18% 16%,rgba(245,200,76,.18),transparent 30%),
+    linear-gradient(135deg,#20190a 0%,#0d131f 58%,#080c14 100%);
+}
+.premium-champion .champion-copy{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:34px 30px 34px 32px;
+  max-width:none;
+}
+.champion-ribbon{
+  align-self:flex-start;
+  margin-bottom:15px;
+  padding:7px 11px;
+  border:1px solid rgba(245,200,76,.55);
+  border-radius:999px;
+  color:#ffe69a;
+  background:rgba(245,200,76,.10);
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+}
+.premium-champion .champion-copy h2{
+  font-size:clamp(40px,6vw,68px);
+  max-width:600px;
+}
+.premium-champion .champion-team{
+  margin-top:2px;
+  font-size:31px;
+}
+.premium-champion .champion-statline{
+  margin-top:16px;
+  font-size:14px;
+  letter-spacing:.02em;
+}
+.premium-champion .champion-copy p{
+  font-size:14px;
+  max-width:560px;
+}
+.champion-visual{
+  position:relative;
+  min-height:430px;
+  background-size:cover;
+  background-position:center;
+  border-left:1px solid rgba(245,200,76,.18);
+}
+.champion-visual:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(8,12,20,.78) 0%,rgba(8,12,20,.10) 34%,rgba(8,12,20,.03) 100%),
+    linear-gradient(180deg,transparent 55%,rgba(5,7,12,.72) 100%);
+  pointer-events:none;
+}
+.champion-photo-label{
+  position:absolute;
+  right:18px;
+  top:18px;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 11px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  background:rgba(5,8,13,.68);
+  backdrop-filter:blur(8px);
+  color:#fff;
+  font-size:10px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+.champion-support-strip{
+  position:absolute;
+  z-index:2;
+  right:16px;
+  bottom:16px;
+  left:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.champion-support-photo{
+  width:100%;
+  height:94px;
+  object-fit:cover;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.20);
+  box-shadow:0 10px 26px rgba(0,0,0,.32);
+}
+.tot-card{
+  padding:18px;
+  overflow:hidden;
+}
+.futsal-court{
+  position:relative;
+  min-height:720px;
+  margin-top:6px;
+  overflow:hidden;
+  border:3px solid rgba(255,255,255,.84);
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(245,200,76,.09),transparent 24%),
+    linear-gradient(180deg,#145844 0%,#0c4737 48%,#0a3a2f 100%);
+  box-shadow:
+    inset 0 0 0 10px rgba(255,255,255,.035),
+    inset 0 0 70px rgba(0,0,0,.26);
+}
+.futsal-court:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:2px;
+  background:rgba(255,255,255,.82);
+}
+.court-circle{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:170px;
+  height:170px;
+  border:2px solid rgba(255,255,255,.82);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+}
+.court-circle:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#fff;
+  transform:translate(-50%,-50%);
+}
+.court-box{
+  position:absolute;
+  left:50%;
+  width:44%;
+  height:105px;
+  border:2px solid rgba(255,255,255,.82);
+  transform:translateX(-50%);
+}
+.court-box-top{
+  top:-2px;
+  border-top:0;
+  border-radius:0 0 90px 90px;
+}
+.court-box-bottom{
+  bottom:-2px;
+  border-bottom:0;
+  border-radius:90px 90px 0 0;
+}
+.tot-special-card{
+  position:absolute;
+  z-index:3;
+  width:clamp(145px,18vw,220px);
+  padding:0;
+  border:0;
+  background:none;
+  cursor:pointer;
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.32));
+  transition:transform .18s ease,filter .18s ease;
+}
+.tot-special-card:hover{
+  transform:translate(-50%,-50%) scale(1.045);
+  filter:drop-shadow(0 17px 22px rgba(0,0,0,.42));
+}
+.tot-special-card img{
+  display:block;
+  width:100%;
+  height:auto;
+  object-fit:contain;
+}
+.tot-special-card.attack-left{left:31%;top:22%;transform:translate(-50%,-50%)}
+.tot-special-card.attack-right{left:69%;top:22%;transform:translate(-50%,-50%)}
+.tot-special-card.mid-left{left:31%;top:52%;transform:translate(-50%,-50%)}
+.tot-special-card.mid-right{left:69%;top:52%;transform:translate(-50%,-50%)}
+.tot-special-card.keeper{left:50%;top:81%;transform:translate(-50%,-50%)}
+.tot-special-card.attack-left:hover,.tot-special-card.attack-right:hover,.tot-special-card.mid-left:hover,.tot-special-card.mid-right:hover,.tot-special-card.keeper:hover{
+  transform:translate(-50%,-50%) scale(1.045);
+}
+.bench-panel{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(260px,.7fr);
+  gap:18px;
+  align-items:end;
+  margin-top:20px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
+}
+.bench-label{margin-top:0}
+.bench-headshots{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.bench-player{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:190px;
+  padding:8px 12px 8px 8px;
+  border:1px solid #2c394f;
+  border-radius:999px;
+  background:#111a29;
+  color:var(--text);
+  cursor:pointer;
+  text-align:left;
+}
+.bench-player:hover{
+  border-color:rgba(245,200,76,.48);
+  background:#151f30;
+}
+.bench-player img{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  object-fit:cover;
+  object-position:50% 14%;
+  border:1px solid #34445d;
+  background:#0d1420;
+}
+.bench-player span{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.bench-player strong{font-size:14px}
+.bench-player small{font-size:10px;color:var(--muted);font-weight:800}
+.compact-honour{
+  margin:0;
+  padding:0;
+  border:0;
+}
+.compact-honour>span{
+  margin-bottom:8px;
+}
+.compact-honour .bench-player{
+  min-width:100%;
+}
+@media(max-width:980px){
+  .premium-champion{grid-template-columns:1fr}
+  .champion-visual{min-height:380px;border-left:0;border-top:1px solid rgba(245,200,76,.18)}
+  .premium-champion .champion-copy{padding-bottom:28px}
+  .futsal-court{min-height:650px}
+  .tot-special-card{width:clamp(135px,25vw,200px)}
+}
+@media(max-width:760px){
+  .premium-champion .champion-copy{padding:24px 20px 24px}
+  .premium-champion .champion-copy h2{font-size:44px}
+  .premium-champion .champion-team{font-size:27px}
+  .champion-visual{min-height:330px}
+  .champion-support-photo{height:72px}
+  .futsal-court{min-height:610px;border-radius:22px}
+  .tot-special-card{width:145px}
+  .court-circle{width:130px;height:130px}
+  .bench-panel{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .premium-champion .champion-copy h2{font-size:38px}
+  .champion-visual{min-height:300px}
+  .champion-photo-label{right:10px;top:10px}
+  .champion-support-strip{right:10px;bottom:10px;left:10px;gap:7px}
+  .champion-support-photo{height:64px;border-radius:10px}
+  .futsal-court{min-height:540px}
+  .tot-special-card{width:125px}
+  .tot-special-card.attack-left{left:29%;top:22%}
+  .tot-special-card.attack-right{left:71%;top:22%}
+  .tot-special-card.mid-left{left:29%;top:52%}
+  .tot-special-card.mid-right{left:71%;top:52%}
+  .tot-special-card.keeper{left:50%;top:81%}
+  .court-circle{width:110px;height:110px}
+  .court-box{height:78px;width:50%}
+  .bench-player{min-width:0;flex:1 1 150px}
+}
