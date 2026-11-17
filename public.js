@@ -228,18 +228,80 @@ function roadToChampions(){
     </article>`;
   }).join('');
 }
+function wolvesTournamentRecord(){
+  const wolves='Wolves';
+  const matches=(state.matches||[]).filter(finalMatch).map(resolvedMatch).filter(m=>m.home===wolves||m.away===wolves);
+  const record={played:matches.length,wins:0,draws:0,losses:0,gf:0,ga:0,shootoutWins:0};
+  matches.forEach(m=>{
+    const hs=n(m.homeScore),as=n(m.awayScore),home=m.home===wolves;
+    const gf=home?hs:as,ga=home?as:hs;
+    record.gf+=Number(gf||0);record.ga+=Number(ga||0);
+    if(gf>ga)record.wins++;
+    else if(gf<ga)record.losses++;
+    else {
+      record.draws++;
+      const wp=home?n(m.homePens):n(m.awayPens),op=home?n(m.awayPens):n(m.homePens);
+      if(wp!=null&&op!=null&&wp>op)record.shootoutWins++;
+    }
+  });
+  return record;
+}
+function contributionRows(key){
+  return totals().filter(x=>x.team==='Wolves'&&Number(x[key]||0)>0).sort((a,b)=>Number(b[key]||0)-Number(a[key]||0)||a.player.localeCompare(b.player));
+}
+function contributionDonut(title,key,label){
+  const rows=contributionRows(key), total=rows.reduce((s,x)=>s+Number(x[key]||0),0);
+  const palette=['#f5c84c','#3dd6b4','#6ea8fe','#ff8a65','#c084fc','#94a3b8','#f472b6'];
+  let running=0;
+  const gradient=rows.length?rows.map((x,i)=>{
+    const start=(running/total)*360;
+    running+=Number(x[key]||0);
+    const end=(running/total)*360;
+    return `${palette[i%palette.length]} ${start.toFixed(2)}deg ${end.toFixed(2)}deg`;
+  }).join(','):'#253147 0deg 360deg';
+  const legend=rows.map((x,i)=>`<button class="contribution-row player-click" data-team="Wolves" data-player="${esc(x.player)}" type="button">
+    <span class="contribution-swatch" style="background:${palette[i%palette.length]}"></span>
+    <span class="contribution-name">${esc(x.player)}</span>
+    <strong>${x[key]}</strong>
+  </button>`).join('');
+  return `<article class="contribution-card">
+    <div class="section-kicker">Wolves ${esc(label)}</div>
+    <h3>${esc(title)}</h3>
+    <div class="contribution-body">
+      <div class="donut-chart" style="background:conic-gradient(${gradient})">
+        <div class="donut-hole"><strong>${total}</strong><span>${esc(label)}</span></div>
+      </div>
+      <div class="contribution-legend">${legend||'<div class="small muted">No stats recorded.</div>'}</div>
+    </div>
+  </article>`;
+}
+function roadMetric(label,value,accent=''){
+  return `<div class="road-metric ${accent}"><strong>${value}</strong><span>${esc(label)}</span></div>`;
+}
 function renderRoadToChampions(){
+  const r=wolvesTournamentRecord();
   return `<section class="overview-section road-section">
     <div class="overview-heading road-heading">
       <div><div class="section-kicker">Undefeated from start to finish</div><h2>Road to Champions</h2></div>
-      <div class="road-summary"><span>6 Matches</span><span>20 Goals</span><span>Undefeated</span></div>
+      <div class="road-summary"><span>${r.played} Matches</span><span>${r.gf} Goals</span><span>Undefeated</span></div>
+    </div>
+    <div class="road-record-grid">
+      ${roadMetric('Wins',r.wins,'win')}
+      ${roadMetric('Draws',r.draws)}
+      ${roadMetric('Losses',r.losses)}
+      ${roadMetric('Goals Scored',r.gf,'gold')}
+      ${roadMetric('Goals Conceded',r.ga)}
     </div>
     <div class="road-card card">
       <div class="road-track">${roadToChampions()}</div>
       <div class="road-finish">
         <div class="road-finish-mark">🏆</div>
-        <div><div class="section-kicker">The finish line</div><strong>2026 FFL Cup Champions</strong><span>Wolves complete an unbeaten run and win the first FFL Cup final decided by penalties.</span></div>
+        <div><div class="section-kicker">The finish line</div><strong>2026 FFL Cup Champions</strong><span>Wolves complete an unbeaten run${r.shootoutWins?' with a penalty-shootout victory in the Grand Final':''}.</span></div>
       </div>
+    </div>
+    <div class="contribution-grid">
+      ${contributionDonut('Who scored the goals?','goals','Goals')}
+      ${contributionDonut('Who created them?','assists','Assists')}
     </div>
   </section>`;
 }
