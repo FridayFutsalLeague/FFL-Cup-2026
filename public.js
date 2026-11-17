@@ -356,33 +356,87 @@ function renderOverview(){
     ${renderRoadToChampions()}`;
 }
 function highlightVideoId(matchId){return String(HIGHLIGHTS_DATA.videos?.[matchId]||'').trim();}
-function highlightCard(m){
+function highlightPenaltyLine(m,r,hs,as){
+  if(!(finalMatch(m)&&hs===as&&n(m.homePens)!=null&&n(m.awayPens)!=null))return '';
+  const hp=n(m.homePens),ap=n(m.awayPens),winner=hp>ap?r.home:r.away;
+  const wp=Math.max(hp,ap),lp=Math.min(hp,ap);
+  return `<div class="highlight-pens">${esc(winner)} win ${wp}–${lp} on penalties</div>`;
+}
+function highlightThumb(m,r,vid,extra=''){
+  return vid
+    ? `<div class="highlight-thumb ${extra}"><img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg'" alt="${esc(r.home)} vs ${esc(r.away)} highlights thumbnail" loading="lazy"><span class="video-play-mark">▶</span></div>`
+    : `<div class="highlight-thumb ${extra}"><div class="highlight-placeholder"><span>▶</span><strong>Highlights coming soon</strong></div></div>`;
+}
+function highlightWatchButton(m,r,vid,label='Watch Highlights'){
+  return vid
+    ? `<button class="watch-highlight-btn" data-video-id="${esc(vid)}" data-video-title="${esc(r.home+' vs '+r.away)}" type="button">▶ ${esc(label)}</button>`
+    : `<button class="watch-highlight-btn disabled" type="button" disabled>Highlights Coming Soon</button>`;
+}
+function highlightCard(m,variant='group'){
   const r=resolvedMatch(m), done=finalMatch(m), hs=n(m.homeScore), as=n(m.awayScore), vid=highlightVideoId(m.matchId);
-  const pens=done&&hs===as&&n(m.homePens)!=null&&n(m.awayPens)!=null?`<div class="highlight-pens">${esc(r.home)} win ${m.homePens}–${m.awayPens} on penalties</div>`:'';
+  const pens=highlightPenaltyLine(m,r,hs,as);
   const stageLabel=stage(m)==='group'?`Group ${esc(m.group)}`:(stage(m)==='semi'?'Semi Final':'Grand Final');
-  const thumb=vid?`<img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="${esc(r.home)} vs ${esc(r.away)} highlights thumbnail" loading="lazy">`:`<div class="highlight-placeholder">Highlights coming soon</div>`;
-  return `<article class="highlight-match-card">
-    <div class="highlight-match-head"><span class="stage-pill">${stageLabel}</span><span class="small muted">${fmtTime(m.time)}</span></div>
-    <div class="highlight-scoreline">
-      <div>${teamBadge(r.home)}<strong>${esc(r.home)}</strong></div>
-      <span class="highlight-score">${done?`${hs}–${as}`:'vs'}</span>
-      <div>${teamBadge(r.away)}<strong>${esc(r.away)}</strong></div>
+  return `<article class="highlight-match-card ${variant==='semi'?'semi-highlight-card':''}">
+    ${highlightThumb(m,r,vid)}
+    <div class="highlight-match-content">
+      <div class="highlight-match-head"><span class="stage-pill">${stageLabel}</span><span class="small muted">${fmtTime(m.time)}</span></div>
+      <div class="highlight-scoreline">
+        <div>${teamBadge(r.home)}<strong>${esc(r.home)}</strong></div>
+        <span class="highlight-score">${done?`${hs}–${as}`:'vs'}</span>
+        <div>${teamBadge(r.away)}<strong>${esc(r.away)}</strong></div>
+      </div>
+      ${pens}
+      ${highlightWatchButton(m,r,vid)}
     </div>
-    ${pens}
-    <div class="highlight-thumb">${thumb}</div>
-    ${vid?`<button class="watch-highlight-btn" data-video-id="${esc(vid)}" data-video-title="${esc(r.home+' vs '+r.away)}" type="button">▶ Watch Highlights</button>`:`<button class="watch-highlight-btn disabled" type="button" disabled>Highlights Coming Soon</button>`}
+  </article>`;
+}
+function grandFinalHighlight(m){
+  if(!m)return '';
+  const r=resolvedMatch(m),hs=n(m.homeScore),as=n(m.awayScore),vid=highlightVideoId(m.matchId);
+  const pens=highlightPenaltyLine(m,r,hs,as);
+  return `<article class="featured-final-card">
+    <div class="featured-final-media">${highlightThumb(m,r,vid,'featured-thumb')}</div>
+    <div class="featured-final-copy">
+      <div class="champion-ribbon">2026 Grand Final</div>
+      <div class="section-kicker">The championship match</div>
+      <h2>${esc(r.home)} <span>${hs}–${as}</span> ${esc(r.away)}</h2>
+      ${pens}
+      <p>Relive the decisive moments from the match that crowned the 2026 FFL Cup champions.</p>
+      <div class="featured-final-teams">
+        <span>${teamBadge(r.home,'featured-team-badge')}${esc(r.home)}</span>
+        <b>VS</b>
+        <span>${teamBadge(r.away,'featured-team-badge')}${esc(r.away)}</span>
+      </div>
+      ${highlightWatchButton(m,r,vid,'Watch Grand Final Highlights')}
+    </div>
   </article>`;
 }
 function renderHighlights(){
   const group=(state.matches||[]).filter(m=>stage(m)==='group');
   const semis=(state.matches||[]).filter(m=>stage(m)==='semi');
-  const final=(state.matches||[]).filter(m=>stage(m)==='final');
+  const final=(state.matches||[]).find(m=>stage(m)==='final');
+  const available=Object.values(HIGHLIGHTS_DATA.videos||{}).filter(v=>String(v||'').trim()).length;
   $('#highlights').innerHTML=`
-    <div class="highlights-intro card"><div class="section-kicker">Relive the tournament</div><h2>Match Highlights</h2><p class="small muted">Watch the best moments from every stage of the 2026 FFL Cup.</p></div>
-    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">12 Matches</div><h2>Group Stage</h2></div></div><div class="highlights-grid">${group.map(highlightCard).join('')}</div></section>
-    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">Final Four</div><h2>Semi Finals</h2></div></div><div class="highlights-grid knockout">${semis.map(highlightCard).join('')}</div></section>
-    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">Championship Match</div><h2>Grand Final</h2></div></div><div class="grand-highlight">${final.map(highlightCard).join('')}</div></section>`;
-  $('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
+    <section class="highlights-hero">
+      <div>
+        <div class="section-kicker">FFL Cup 2026 Video Hub</div>
+        <h2>Relive Every Match</h2>
+        <p>From the opening group games to the first penalty-shootout final in FFL Cup history.</p>
+      </div>
+      <div class="highlights-count"><strong>${available}</strong><span>of 15 videos live</span></div>
+    </section>
+    <section class="highlights-stage featured-final-section">
+      ${grandFinalHighlight(final)}
+    </section>
+    <section class="highlights-stage">
+      <div class="overview-heading"><div><div class="section-kicker">Final Four</div><h2>Semi Finals</h2></div><span class="pill">2 Matches</span></div>
+      <div class="highlights-grid knockout">${semis.map(m=>highlightCard(m,'semi')).join('')}</div>
+    </section>
+    <section class="highlights-stage">
+      <div class="overview-heading"><div><div class="section-kicker">The road to the knockouts</div><h2>Group Stage</h2></div><span class="pill">12 Matches</span></div>
+      <div class="highlights-grid group-video-grid">${group.map(m=>highlightCard(m,'group')).join('')}</div>
+    </section>`;
+  $$('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
 }
 function openVideo(id,title){
   const modal=$('#videoModal'), frame=$('#highlightVideoFrame');
