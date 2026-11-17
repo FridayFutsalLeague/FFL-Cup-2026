@@ -201,6 +201,48 @@ function benchHeadshot(x,extra=''){
     <span><strong>${esc(x.displayName||x.player)}</strong><small>${esc(x.team)}</small></span>
   </button>`;
 }
+function roadToChampions(){
+  const wolves='Wolves';
+  const matches=(state.matches||[])
+    .filter(finalMatch)
+    .map(resolvedMatch)
+    .filter(m=>m.home===wolves||m.away===wolves);
+  return matches.map((m,i)=>{
+    const hs=n(m.homeScore),as=n(m.awayScore);
+    const wolvesHome=m.home===wolves;
+    const wolvesScore=wolvesHome?hs:as;
+    const oppScore=wolvesHome?as:hs;
+    const opponent=wolvesHome?m.away:m.home;
+    const isFinal=stage(m)==='final';
+    const hasPens=isFinal&&wolvesScore===oppScore&&n(m.homePens)!=null&&n(m.awayPens)!=null;
+    const wolvesPens=wolvesHome?n(m.homePens):n(m.awayPens);
+    const oppPens=wolvesHome?n(m.awayPens):n(m.homePens);
+    const result=hasPens?`Won ${wolvesPens}–${oppPens} on pens`:(wolvesScore>oppScore?'Win':'Draw');
+    const stageLabel=stage(m)==='group'?'Group Stage':(stage(m)==='semi'?'Semi Final':'Grand Final');
+    return `<article class="road-match ${isFinal?'road-final':''}">
+      <div class="road-node">${isFinal?'🏆':i+1}</div>
+      <div class="road-stage">${stageLabel}</div>
+      <div class="road-opponent">${teamBadge(opponent,'road-badge')}<span>vs ${esc(opponent)}</span></div>
+      <div class="road-score">${wolvesScore}–${oppScore}</div>
+      <div class="road-result">${esc(result)}</div>
+    </article>`;
+  }).join('');
+}
+function renderRoadToChampions(){
+  return `<section class="overview-section road-section">
+    <div class="overview-heading road-heading">
+      <div><div class="section-kicker">Undefeated from start to finish</div><h2>Road to Champions</h2></div>
+      <div class="road-summary"><span>6 Matches</span><span>20 Goals</span><span>Undefeated</span></div>
+    </div>
+    <div class="road-card card">
+      <div class="road-track">${roadToChampions()}</div>
+      <div class="road-finish">
+        <div class="road-finish-mark">🏆</div>
+        <div><div class="section-kicker">The finish line</div><strong>2026 FFL Cup Champions</strong><span>Wolves complete an unbeaten run and win the first FFL Cup final decided by penalties.</span></div>
+      </div>
+    </div>
+  </section>`;
+}
 function renderOverview(){
   const c=HIGHLIGHTS_DATA.champion;
   const awards=HIGHLIGHTS_DATA.awards.map(a=>`
@@ -211,7 +253,6 @@ function renderOverview(){
   const starters=HIGHLIGHTS_DATA.teamOfTournament.starters.map(tournamentCard).join('');
   const bench=HIGHLIGHTS_DATA.teamOfTournament.bench.map(x=>benchHeadshot(x)).join('');
   const hm=HIGHLIGHTS_DATA.teamOfTournament.honorableMention;
-  const support=(c.supportImages||[]).map((src,i)=>`<img class="champion-support-photo" src="${esc(src)}" alt="Wolves championship celebration photo ${i+1}" onerror="this.style.display='none'">`).join('');
   $('#overview').innerHTML=`
     <section class="champion-card premium-champion">
       <div class="champion-copy">
@@ -224,7 +265,6 @@ function renderOverview(){
       </div>
       <div class="champion-visual" style="background-image:linear-gradient(180deg,rgba(4,7,12,.08),rgba(4,7,12,.55)),url('${esc(c.heroImage||'')}')">
         <div class="champion-photo-label"><span>🏆</span> Tournament Champions</div>
-        <div class="champion-support-strip">${support}</div>
       </div>
     </section>
     <section class="overview-section">
@@ -250,7 +290,8 @@ function renderOverview(){
           <div class="honourable-mention compact-honour"><span>Honourable Mention</span>${benchHeadshot(hm,'honour-player')}</div>
         </div>
       </div>
-    </section>`;
+    </section>
+    ${renderRoadToChampions()}`;
 }
 function highlightVideoId(matchId){return String(HIGHLIGHTS_DATA.videos?.[matchId]||'').trim();}
 function highlightCard(m){
