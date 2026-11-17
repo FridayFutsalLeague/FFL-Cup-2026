@@ -4,10 +4,10 @@ export const HIGHLIGHTS_DATA = {
     title: '2026 FFL Cup Champions',
     statline: 'Undefeated • 20 Goals • 5th Anniversary Winners',
     description: 'The Wolves went undefeated throughout the tournament and won the first-ever FFL Cup final penalty shootout, with Cabe making two crucial penalty saves.',
-    heroImage: 'assets/highlights/championship-3.jpg',
+    heroImage: 'assets/highlights/Championship 3.jpg',
     supportImages: [
-      'assets/highlights/championship-1.jpg',
-      'assets/highlights/championship-2.jpg'
+      'assets/highlights/Championship 1.jpg',
+      'assets/highlights/Championship 2.jpg'
     ]
   },
   awards: [
@@ -17,11 +17,11 @@ export const HIGHLIGHTS_DATA = {
   ],
   teamOfTournament: {
     starters: [
-      { team: 'Wolves', player: 'Anthony', displayName: 'Anthony', slot: 'attack-left', card: 'assets/highlights/anthony-tott-2026.png' },
-      { team: 'Wolves', player: 'Rob', displayName: 'Rob', slot: 'attack-right', card: 'assets/highlights/rob-tott-2026.png' },
-      { team: 'Eagles', player: 'David', displayName: 'David', slot: 'mid-left', card: 'assets/highlights/david-tott-2026.png' },
-      { team: 'Eagles', player: 'Simon', displayName: 'Simon T', slot: 'mid-right', card: 'assets/highlights/simont-tott-2026.png' },
-      { team: 'Eagles', player: 'Leo', displayName: 'Leo', slot: 'keeper', card: 'assets/highlights/leo-tott-2026.png' }
+      { team: 'Wolves', player: 'Anthony', displayName: 'Anthony', slot: 'attack-left', card: 'assets/highlights/ANTHONY-POTT-2026.png' },
+      { team: 'Wolves', player: 'Rob', displayName: 'Rob', slot: 'attack-right', card: 'assets/highlights/ROB-TOTT-2026.png' },
+      { team: 'Eagles', player: 'David', displayName: 'David', slot: 'mid-left', card: 'assets/highlights/DAVID-TOTT-2026.png' },
+      { team: 'Eagles', player: 'Simon', displayName: 'Simon T', slot: 'mid-right', card: 'assets/highlights/SIMONT-TOTT-2026.png' },
+      { team: 'Eagles', player: 'Leo', displayName: 'Leo', slot: 'keeper', card: 'assets/highlights/LEO-TOTT-2026.png' }
     ],
     bench: [
       { team: 'Bears', player: 'Chris', displayName: 'Chris' },
