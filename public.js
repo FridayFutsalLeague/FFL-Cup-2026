@@ -189,6 +189,18 @@ function highlightPlayerCard(x,subtitle=''){
     </span>
   </button>`;
 }
+function tournamentCard(x){
+  const fallback=photoPath(x.team,x.player);
+  return `<button class="tot-special-card player-click ${esc(x.slot||'')}" data-team="${esc(x.team)}" data-player="${esc(x.player)}" type="button" aria-label="View ${esc(x.displayName||x.player)} profile">
+    <img src="${esc(x.card||fallback)}" alt="${esc(x.displayName||x.player)} Team of the Tournament card" onerror="this.onerror=null;this.src='${fallback}'">
+  </button>`;
+}
+function benchHeadshot(x,extra=''){
+  return `<button class="bench-player player-click ${extra}" data-team="${esc(x.team)}" data-player="${esc(x.player)}" type="button">
+    <img src="${photoPath(x.team,x.player)}" alt="${esc(x.displayName||x.player)}">
+    <span><strong>${esc(x.displayName||x.player)}</strong><small>${esc(x.team)}</small></span>
+  </button>`;
+}
 function renderOverview(){
   const c=HIGHLIGHTS_DATA.champion;
   const awards=HIGHLIGHTS_DATA.awards.map(a=>`
@@ -196,17 +208,23 @@ function renderOverview(){
       <div class="section-kicker">${esc(a.award)}</div>
       ${highlightPlayerCard(a,a.stat)}
     </article>`).join('');
-  const starters=HIGHLIGHTS_DATA.teamOfTournament.starters.map(x=>highlightPlayerCard(x,x.team)).join('');
-  const bench=HIGHLIGHTS_DATA.teamOfTournament.bench.map(x=>highlightPlayerCard(x,x.team)).join('');
+  const starters=HIGHLIGHTS_DATA.teamOfTournament.starters.map(tournamentCard).join('');
+  const bench=HIGHLIGHTS_DATA.teamOfTournament.bench.map(x=>benchHeadshot(x)).join('');
   const hm=HIGHLIGHTS_DATA.teamOfTournament.honorableMention;
+  const support=(c.supportImages||[]).map((src,i)=>`<img class="champion-support-photo" src="${esc(src)}" alt="Wolves championship celebration photo ${i+1}" onerror="this.style.display='none'">`).join('');
   $('#overview').innerHTML=`
-    <section class="champion-card">
+    <section class="champion-card premium-champion">
       <div class="champion-copy">
+        <div class="champion-ribbon">5th Anniversary Champions</div>
         <div class="section-kicker">2026 FFL Cup Recap</div>
         <h2>${esc(c.title)}</h2>
         <div class="champion-team">${teamBadge(c.team,'champion-badge')}<span>${esc(c.team)}</span></div>
         <div class="champion-statline">${esc(c.statline)}</div>
         <p>${esc(c.description)}</p>
+      </div>
+      <div class="champion-visual" style="background-image:linear-gradient(180deg,rgba(4,7,12,.08),rgba(4,7,12,.55)),url('${esc(c.heroImage||'')}')">
+        <div class="champion-photo-label"><span>🏆</span> Tournament Champions</div>
+        <div class="champion-support-strip">${support}</div>
       </div>
     </section>
     <section class="overview-section">
@@ -217,10 +235,20 @@ function renderOverview(){
       <div class="overview-heading"><div><div class="section-kicker">Best of the Cup</div><h2>Team of the Tournament</h2></div></div>
       <div class="tot-card card">
         <div class="tot-label">Starting Five</div>
-        <div class="tot-grid starters">${starters}</div>
-        <div class="tot-label bench-label">Bench</div>
-        <div class="tot-grid bench">${bench}</div>
-        <div class="honourable-mention"><span>Honourable Mention</span>${highlightPlayerCard(hm,hm.note)}</div>
+        <div class="futsal-court" aria-label="Team of the Tournament starting five">
+          <div class="court-halfway"></div>
+          <div class="court-circle"></div>
+          <div class="court-box court-box-top"></div>
+          <div class="court-box court-box-bottom"></div>
+          ${starters}
+        </div>
+        <div class="bench-panel">
+          <div>
+            <div class="tot-label bench-label">Bench</div>
+            <div class="bench-headshots">${bench}</div>
+          </div>
+          <div class="honourable-mention compact-honour"><span>Honourable Mention</span>${benchHeadshot(hm,'honour-player')}</div>
+        </div>
       </div>
     </section>`;
 }
