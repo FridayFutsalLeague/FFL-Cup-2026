@@ -4,11 +4,7 @@ export const HIGHLIGHTS_DATA = {
     title: '2026 FFL Cup Champions',
     statline: 'Undefeated • 20 Goals • 5th Anniversary Winners',
     description: 'The Wolves went undefeated throughout the tournament and won the first-ever FFL Cup final penalty shootout, with Cabe making two crucial penalty saves.',
-    heroImage: 'assets/highlights/Championship 3.jpg',
-    supportImages: [
-      'assets/highlights/Championship 1.jpg',
-      'assets/highlights/Championship 2.jpg'
-    ]
+    heroImage: 'assets/highlights/Championship 3.jpg'
   },
   awards: [
     { award: 'Player of the Tournament', team: 'Wolves', player: 'Anthony', displayName: 'Anthony', stat: '9 Goals • 5 Assists • 3 MOTM' },
