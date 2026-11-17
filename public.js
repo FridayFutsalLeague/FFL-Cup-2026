@@ -1,5 +1,6 @@
 import { APPS_SCRIPT_URL } from './config.js';
 import { PLAYER_HISTORY } from './player-history.js';
+import { HIGHLIGHTS_DATA } from './highlights-data.js';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -178,6 +179,94 @@ $('.player-modal-close').addEventListener('click',closePlayer);
 $('.player-modal-backdrop').addEventListener('click',closePlayer);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePlayer()});
 
+
+function highlightPlayerCard(x,subtitle=''){
+  return `<button class="highlight-player-card player-click" data-team="${esc(x.team)}" data-player="${esc(x.player)}" type="button">
+    <img src="${photoPath(x.team,x.player)}" alt="${esc(x.displayName||x.player)}">
+    <span class="highlight-player-copy">
+      <span class="highlight-player-name">${esc(x.displayName||x.player)}</span>
+      ${subtitle?`<span class="highlight-player-sub">${esc(subtitle)}</span>`:''}
+    </span>
+  </button>`;
+}
+function renderOverview(){
+  const c=HIGHLIGHTS_DATA.champion;
+  const awards=HIGHLIGHTS_DATA.awards.map(a=>`
+    <article class="award-card">
+      <div class="section-kicker">${esc(a.award)}</div>
+      ${highlightPlayerCard(a,a.stat)}
+    </article>`).join('');
+  const starters=HIGHLIGHTS_DATA.teamOfTournament.starters.map(x=>highlightPlayerCard(x,x.team)).join('');
+  const bench=HIGHLIGHTS_DATA.teamOfTournament.bench.map(x=>highlightPlayerCard(x,x.team)).join('');
+  const hm=HIGHLIGHTS_DATA.teamOfTournament.honorableMention;
+  $('#overview').innerHTML=`
+    <section class="champion-card">
+      <div class="champion-copy">
+        <div class="section-kicker">2026 FFL Cup Recap</div>
+        <h2>${esc(c.title)}</h2>
+        <div class="champion-team">${teamBadge(c.team,'champion-badge')}<span>${esc(c.team)}</span></div>
+        <div class="champion-statline">${esc(c.statline)}</div>
+        <p>${esc(c.description)}</p>
+      </div>
+    </section>
+    <section class="overview-section">
+      <div class="overview-heading"><div><div class="section-kicker">Individual honours</div><h2>Tournament Awards</h2></div></div>
+      <div class="awards-grid">${awards}</div>
+    </section>
+    <section class="overview-section">
+      <div class="overview-heading"><div><div class="section-kicker">Best of the Cup</div><h2>Team of the Tournament</h2></div></div>
+      <div class="tot-card card">
+        <div class="tot-label">Starting Five</div>
+        <div class="tot-grid starters">${starters}</div>
+        <div class="tot-label bench-label">Bench</div>
+        <div class="tot-grid bench">${bench}</div>
+        <div class="honourable-mention"><span>Honourable Mention</span>${highlightPlayerCard(hm,hm.note)}</div>
+      </div>
+    </section>`;
+}
+function highlightVideoId(matchId){return String(HIGHLIGHTS_DATA.videos?.[matchId]||'').trim();}
+function highlightCard(m){
+  const r=resolvedMatch(m), done=finalMatch(m), hs=n(m.homeScore), as=n(m.awayScore), vid=highlightVideoId(m.matchId);
+  const pens=done&&hs===as&&n(m.homePens)!=null&&n(m.awayPens)!=null?`<div class="highlight-pens">${esc(r.home)} win ${m.homePens}–${m.awayPens} on penalties</div>`:'';
+  const stageLabel=stage(m)==='group'?`Group ${esc(m.group)}`:(stage(m)==='semi'?'Semi Final':'Grand Final');
+  const thumb=vid?`<img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg" alt="${esc(r.home)} vs ${esc(r.away)} highlights thumbnail" loading="lazy">`:`<div class="highlight-placeholder">Highlights coming soon</div>`;
+  return `<article class="highlight-match-card">
+    <div class="highlight-match-head"><span class="stage-pill">${stageLabel}</span><span class="small muted">${fmtTime(m.time)}</span></div>
+    <div class="highlight-scoreline">
+      <div>${teamBadge(r.home)}<strong>${esc(r.home)}</strong></div>
+      <span class="highlight-score">${done?`${hs}–${as}`:'vs'}</span>
+      <div>${teamBadge(r.away)}<strong>${esc(r.away)}</strong></div>
+    </div>
+    ${pens}
+    <div class="highlight-thumb">${thumb}</div>
+    ${vid?`<button class="watch-highlight-btn" data-video-id="${esc(vid)}" data-video-title="${esc(r.home+' vs '+r.away)}" type="button">▶ Watch Highlights</button>`:`<button class="watch-highlight-btn disabled" type="button" disabled>Highlights Coming Soon</button>`}
+  </article>`;
+}
+function renderHighlights(){
+  const group=(state.matches||[]).filter(m=>stage(m)==='group');
+  const semis=(state.matches||[]).filter(m=>stage(m)==='semi');
+  const final=(state.matches||[]).filter(m=>stage(m)==='final');
+  $('#highlights').innerHTML=`
+    <div class="highlights-intro card"><div class="section-kicker">Relive the tournament</div><h2>Match Highlights</h2><p class="small muted">Watch the best moments from every stage of the 2026 FFL Cup.</p></div>
+    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">12 Matches</div><h2>Group Stage</h2></div></div><div class="highlights-grid">${group.map(highlightCard).join('')}</div></section>
+    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">Final Four</div><h2>Semi Finals</h2></div></div><div class="highlights-grid knockout">${semis.map(highlightCard).join('')}</div></section>
+    <section class="highlights-stage"><div class="overview-heading"><div><div class="section-kicker">Championship Match</div><h2>Grand Final</h2></div></div><div class="grand-highlight">${final.map(highlightCard).join('')}</div></section>`;
+  $('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
+}
+function openVideo(id,title){
+  const modal=$('#videoModal'), frame=$('#highlightVideoFrame');
+  frame.src=`https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+  $('#videoModalTitle').textContent=title||'FFL Cup Highlights';
+  modal.classList.remove('hidden'); document.body.classList.add('modal-open');
+}
+function closeVideo(){
+  $('#videoModal').classList.add('hidden');
+  $('#highlightVideoFrame').src='';
+  document.body.classList.remove('modal-open');
+}
+$('.video-modal-close')?.addEventListener('click',closeVideo);
+$('.video-modal-backdrop')?.addEventListener('click',closeVideo);
+
 function render(){
   if(!state)return;
   const A=standings('A'),B=standings('B');
@@ -185,7 +274,8 @@ function render(){
   const latest=[...completed].slice(-4).reverse(),next=upcoming.slice(0,4),all=totals();
   const goals=[...all].filter(x=>x.goals>0).sort((a,b)=>b.goals-a.goals||b.assists-a.assists||a.player.localeCompare(b.player)).slice(0,20);
   const assists=[...all].filter(x=>x.assists>0).sort((a,b)=>b.assists-a.assists||b.goals-a.goals||a.player.localeCompare(b.player)).slice(0,20);
-  $('#overview').innerHTML=`<div class="grid"><div class="card"><div class="section-title"><div><div class="section-kicker">Tournament pulse</div><h2>Latest Results</h2></div><span class="pill">${completed.length}/12 group games</span></div>${latest.length?latest.map(fixture).join(''):'<div class="empty-state">No results yet.</div>'}</div><div class="card"><div class="section-kicker">Coming up</div><h2>Next Matches</h2>${next.length?next.map(fixture).join(''):'<div class="empty-state">Group stage complete.</div>'}</div></div><div class="grid" style="margin-top:16px"><div class="card"><div class="section-kicker">Standings</div><h3>Group A</h3>${table(A)}</div><div class="card"><div class="section-kicker">Standings</div><h3>Group B</h3>${table(B)}</div></div><div class="grid" style="margin-top:16px"><div class="card"><div class="section-kicker">Golden Boot</div><h2>Top 5 Goals</h2>${statList(goals.slice(0,5),'goals')}</div><div class="card"><div class="section-kicker">Creators</div><h2>Top 5 Assists</h2>${statList(assists.slice(0,5),'assists')}</div></div>`;
+  renderOverview();
+  renderHighlights();
   renderTeams();
   $('#groups').innerHTML=`<div class="grid"><div class="card"><div class="section-kicker">Group stage</div><h2>Group A</h2>${table(A)}</div><div class="card"><div class="section-kicker">Group stage</div><h2>Group B</h2>${table(B)}</div></div>`;
   const court1Matches=groupMatches.filter(m=>Number(m.court)===1);
