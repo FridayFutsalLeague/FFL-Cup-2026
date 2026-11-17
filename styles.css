@@ -942,3 +942,33 @@ body.modal-open{overflow:hidden}
   .featured-final-copy .highlight-pens{text-align:left}
   .group-video-grid{grid-template-columns:1fr}
 }
+
+
+/* v4.10 — separated Group 1 / Group 2 highlight sections */
+.group-highlight-section{
+  margin-top:14px;
+  padding:16px;
+  border:1px solid #2b394f;
+  border-radius:20px;
+  background:linear-gradient(180deg,rgba(17,26,41,.92),rgba(10,16,26,.96));
+}
+.group-highlight-section + .group-highlight-section{margin-top:18px}
+.group-highlight-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+  padding-bottom:11px;
+  border-bottom:1px solid #26344a;
+}
+.group-highlight-heading h3{
+  margin:1px 0 0;
+  font-size:23px;
+  letter-spacing:-.03em;
+}
+@media(max-width:760px){
+  .group-highlight-section{padding:13px}
+  .group-highlight-heading{align-items:flex-start}
+  .group-highlight-heading h3{font-size:21px}
+}
