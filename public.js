@@ -375,7 +375,8 @@ function highlightWatchButton(m,r,vid,label='Watch Highlights'){
 function highlightCard(m,variant='group'){
   const r=resolvedMatch(m), done=finalMatch(m), hs=n(m.homeScore), as=n(m.awayScore), vid=highlightVideoId(m.matchId);
   const pens=highlightPenaltyLine(m,r,hs,as);
-  const stageLabel=stage(m)==='group'?`Group ${esc(m.group)}`:(stage(m)==='semi'?'Semi Final':'Grand Final');
+  const groupLabel=m.group==='A'?'Group 1':(m.group==='B'?'Group 2':`Group ${esc(m.group)}`);
+  const stageLabel=stage(m)==='group'?groupLabel:(stage(m)==='semi'?'Semi Final':'Grand Final');
   return `<article class="highlight-match-card ${variant==='semi'?'semi-highlight-card':''}">
     ${highlightThumb(m,r,vid)}
     <div class="highlight-match-content">
@@ -413,6 +414,8 @@ function grandFinalHighlight(m){
 }
 function renderHighlights(){
   const group=(state.matches||[]).filter(m=>stage(m)==='group');
+  const group1=group.filter(m=>m.group==='A');
+  const group2=group.filter(m=>m.group==='B');
   const semis=(state.matches||[]).filter(m=>stage(m)==='semi');
   const final=(state.matches||[]).find(m=>stage(m)==='final');
   const available=Object.values(HIGHLIGHTS_DATA.videos||{}).filter(v=>String(v||'').trim()).length;
@@ -434,9 +437,16 @@ function renderHighlights(){
     </section>
     <section class="highlights-stage">
       <div class="overview-heading"><div><div class="section-kicker">The road to the knockouts</div><h2>Group Stage</h2></div><span class="pill">12 Matches</span></div>
-      <div class="highlights-grid group-video-grid">${group.map(m=>highlightCard(m,'group')).join('')}</div>
+      <div class="group-highlight-section">
+        <div class="group-highlight-heading"><div><div class="section-kicker">Group Stage</div><h3>Group 1</h3></div><span class="pill">${group1.length} Matches</span></div>
+        <div class="highlights-grid group-video-grid">${group1.map(m=>highlightCard(m,'group')).join('')}</div>
+      </div>
+      <div class="group-highlight-section">
+        <div class="group-highlight-heading"><div><div class="section-kicker">Group Stage</div><h3>Group 2</h3></div><span class="pill">${group2.length} Matches</span></div>
+        <div class="highlights-grid group-video-grid">${group2.map(m=>highlightCard(m,'group')).join('')}</div>
+      </div>
     </section>`;
-  $$('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
+  $('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
 }
 function openVideo(id,title){
   const modal=$('#videoModal'), frame=$('#highlightVideoFrame');
