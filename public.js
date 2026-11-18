@@ -364,7 +364,7 @@ function highlightPenaltyLine(m,r,hs,as){
 }
 function highlightThumb(m,r,vid,extra=''){
   return vid
-    ? `<div class="highlight-thumb ${extra}"><img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg'" alt="${esc(r.home)} vs ${esc(r.away)} highlights thumbnail" loading="lazy"><span class="video-play-mark">▶</span></div>`
+    ? `<button class="highlight-thumb highlight-thumb-btn ${extra}" data-video-id="${esc(vid)}" data-video-title="${esc(r.home+' vs '+r.away)}" type="button" aria-label="Play ${esc(r.home)} vs ${esc(r.away)} highlights"><img src="https://img.youtube.com/vi/${encodeURIComponent(vid)}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://img.youtube.com/vi/${encodeURIComponent(vid)}/hqdefault.jpg'" alt="${esc(r.home)} vs ${esc(r.away)} highlights thumbnail" loading="lazy"><span class="video-play-mark">▶</span></button>`
     : `<div class="highlight-thumb ${extra}"><div class="highlight-placeholder"><span>▶</span><strong>Highlights coming soon</strong></div></div>`;
 }
 function highlightWatchButton(m,r,vid,label='Watch Highlights'){
@@ -446,7 +446,7 @@ function renderHighlights(){
         <div class="highlights-grid group-video-grid">${group2.map(m=>highlightCard(m,'group')).join('')}</div>
       </div>
     </section>`;
-  document.querySelectorAll('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
+  document.querySelectorAll('.highlight-thumb-btn[data-video-id], .watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
 }
 function openVideo(id,title){
   const modal=$('#videoModal'), frame=$('#highlightVideoFrame');
