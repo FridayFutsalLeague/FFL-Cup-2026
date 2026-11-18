@@ -1,4 +1,4 @@
-const CACHE='ffl-cup-2026-v4-12';
+const CACHE='ffl-cup-2026-v4-13';
 const CORE=['./','./index.html','./styles.css','./public.js','./highlights-data.js','./player-history.js','./config.js','./manifest.json','./assets/app/icon-192.png','./assets/app/icon-512.png','./assets/logos/ffl-mark.webp','./assets/logos/ffl-logo-white.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
