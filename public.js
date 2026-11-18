@@ -446,7 +446,7 @@ function renderHighlights(){
         <div class="highlights-grid group-video-grid">${group2.map(m=>highlightCard(m,'group')).join('')}</div>
       </div>
     </section>`;
-  $('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
+  document.querySelectorAll('.watch-highlight-btn[data-video-id]').forEach(btn=>btn.addEventListener('click',()=>openVideo(btn.dataset.videoId,btn.dataset.videoTitle)));
 }
 function openVideo(id,title){
   const modal=$('#videoModal'), frame=$('#highlightVideoFrame');
