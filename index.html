@@ -36,7 +36,8 @@
     <div id="installHelp" class="notice install-help hidden"></div>
 
     <nav class="nav" aria-label="Tournament sections">
-      <button class="active" data-tab="overview">Home</button>
+      <button class="active" data-tab="overview">Overview</button>
+      <button data-tab="highlights">Highlights</button>
       <button data-tab="fixtures">Fixtures</button>
       <button data-tab="finals">Finals</button>
       <button data-tab="teams">Teams</button>
@@ -46,6 +47,7 @@
     </nav>
 
     <section id="overview" class="tab"></section>
+    <section id="highlights" class="tab hidden"></section>
     <section id="teams" class="tab hidden"></section>
     <section id="groups" class="tab hidden"></section>
     <section id="fixtures" class="tab hidden"></section>
@@ -64,6 +66,17 @@
     <div class="player-modal-panel">
       <button class="player-modal-close" aria-label="Close player profile">×</button>
       <div id="playerModalBody"></div>
+    </div>
+  </div>
+
+  <div id="videoModal" class="video-modal hidden" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+    <button class="video-modal-backdrop" aria-label="Close highlights video"></button>
+    <div class="video-modal-panel">
+      <button class="video-modal-close" aria-label="Close highlights video">×</button>
+      <div class="video-frame-wrap">
+        <iframe id="highlightVideoFrame" title="FFL Cup highlights video" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div id="videoModalTitle" class="video-modal-title"></div>
     </div>
   </div>
 
