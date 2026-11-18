@@ -26,8 +26,12 @@ export const HIGHLIGHTS_DATA = {
     honorableMention: { team: 'Eagles', player: 'Nhan', displayName: 'Nhan', note: 'Golden Boot • 10 Goals' }
   },
   videos: {
-    g1: '', g2: '', g3: '', g4: '', g5: '', g6: '',
-    g7: '', g8: '', g9: '', g10: '', g11: '', g12: '',
-    sf1: '', sf2: '', final: 'Dl6XaiMI9p0'
+    g1: 'IYtWqeF5N3o', g2: 'uMPO67pipyM',
+    g3: '6lSgux5BhdM', g4: 'LRdZfau10pM',
+    g5: 'fLN59hiuBQ4', g6: 'GaKeiFnm7NA',
+    g7: 'sc26jRwOs9E', g8: 'L1xdrZLuvng',
+    g9: 'dynVfhPoP2I', g10: 'phFHzNayJqI',
+    g11: 'XmuFm9ITLlY', g12: 's7A7byTfSog',
+    sf1: 'MKsIsZ1LGfg', sf2: 'hffcXkXw-v0', final: 'Dl6XaiMI9p0'
   }
 };
